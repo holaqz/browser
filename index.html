@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+        #close-btn {
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            background: #ff4444; 
+            color: white; 
+            border: none; 
+            border-radius: 50%;
+            width: 40px; 
+            height: 40px; 
+            font-size: 20px; 
+            cursor: pointer; 
+            z-index: 10000;
+        }
+        iframe { 
+            width: 100vw; 
+            height: 100vh; 
+            border: none; }
+    </style>
+</head>
+<body>
+    <button id="close-btn">×</button>
+    <iframe src="https://example.com"></iframe>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        let cursorLeftTime = null;
+
+        function addEvent(obj, evt, fn) {
+            if (obj.addEventListener) obj.addEventListener(evt, fn, false);
+            else if (obj.attachEvent) obj.attachEvent("on" + evt, fn);
+        }
+
+        addEvent(window, "load", function() {
+            addEvent(document, "mouseout", function(e) {
+                e = e || window.event;
+                var from = e.relatedTarget || e.toElement;
+                if ((!from || from.nodeName == "HTML") && !cursorLeftTime) {
+                    cursorLeftTime = Date.now();
+                    ipcRenderer.send('cursor-left', { timestamp: cursorLeftTime, type: 'cursor_left' });
+                }
+            });
+            
+            addEvent(document, "mouseover", function() {
+                if (cursorLeftTime) {
+                    const returnedTime = Date.now();
+                    const duration = (returnedTime - cursorLeftTime) / 1000;
+                    ipcRenderer.send('cursor-returned', { 
+                        timestamp: returnedTime, 
+                        type: 'cursor_returned', 
+                        duration: duration 
+                    });
+                    cursorLeftTime = null;
+                }
+            });
+        });
+
+        document.getElementById('close-btn').addEventListener('click', () => {
+            ipcRenderer.send('close-app');
+        });
+    </script>
+</body>
+</html>

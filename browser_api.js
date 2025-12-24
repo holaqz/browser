@@ -1,11 +1,6 @@
-// Browser API - функции для работы с данными и событиями
-// Глобальные переменные, используемые в API
-// Переменная trackingEnabled синхронизируется с renderer.js через IPC
-
 let initializationAttempts = 0;
-const maxAttempts = 50; // Максимум 5 секунд (50 * 100мс)
+const maxAttempts = 50;
 
-// Проверяем готовность browserAPI
 function initializeBrowserAPI() {
     if (window.browserAPI && typeof window.browserAPI.send === 'function') {
         window.Browser = {
@@ -103,10 +98,8 @@ function initializeBrowserAPI() {
     }
 };
     } else {
-        // Если browserAPI еще не готов, ждем события
         setTimeout(initializeBrowserAPI, 100);
     }
 }
 
-// Запускаем инициализацию
 initializeBrowserAPI(); 

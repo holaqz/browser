@@ -1,7 +1,6 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 
-// Импортируем обработчики IPC и состояние приложения
 const { appState } = require('./ipc_handlers');
 
 let mainWindow;

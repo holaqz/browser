@@ -1,13 +1,11 @@
 const { ipcMain } = require('electron');
 
-// Глобальные переменные для хранения состояния приложения
 const appState = {
     events: [],
     inactiveTime: null,
     trackingEnabled: true
 };
 
-// Обработчики IPC событий
 ipcMain.on('cursor-left', (_, data) => {
     if (!data || !appState.trackingEnabled) return;
     data.timestamp = Number(data.timestamp);
@@ -76,5 +74,4 @@ ipcMain.on('get-events-last-minutes', (event, data) => {
     event.reply('get-events-last-minutes-response', recentEvents);
 });
 
-// Экспортируем объект состояния приложения
 module.exports = { appState };

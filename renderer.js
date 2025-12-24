@@ -2,12 +2,10 @@ let cursorLeftTime = null;
 let inactiveTime = null;
 let trackingEnabled = true;
 
-// Обновленная функция для управления состоянием отслеживания
 function updateTrackingState(enabled) {
     trackingEnabled = enabled;
 }
 
-// Постоянно слушаем изменения состояния отслеживания из основного процесса
 if (window.browserAPI && typeof window.browserAPI.onResponseAlways === 'function') {
     window.browserAPI.onResponseAlways('tracking-state-changed', (data) => {
         if (data.enabled !== undefined) {
@@ -18,11 +16,9 @@ if (window.browserAPI && typeof window.browserAPI.onResponseAlways === 'function
     console.error('browserAPI is not available in renderer.js');
 }
 
-// Проверка активности окна
 function checkWindowActivity() {
     if (!trackingEnabled) return;
 
-    // Определяем активность через фокус и видимость
     const isFocused = document.hasFocus();
     const isVisible = !document.hidden;
     const isActive = isFocused && isVisible;
@@ -49,11 +45,9 @@ function checkWindowActivity() {
     }
 }
 
-// Запускаем проверку активности каждые 100мс
 setInterval(checkWindowActivity, 100);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Отслеживание ухода курсора за пределы окна
     document.addEventListener("mouseout", function(e) {
         if (!trackingEnabled || !window.browserAPI || typeof window.browserAPI.send !== 'function') return;
 
@@ -67,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Отслеживание возвращения курсора в окно
     document.addEventListener("mouseover", function() {
         if (!trackingEnabled || !window.browserAPI || typeof window.browserAPI.send !== 'function') return;
 

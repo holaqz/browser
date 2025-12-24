@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Разрешенные каналы
 const validChannels = new Set([
     'cursor-left',
     'cursor-returned',
@@ -13,7 +12,6 @@ const validChannels = new Set([
     'get-events-last-minutes-response'
 ]);
 
-// Предоставляем API процессу рендеринга
 contextBridge.exposeInMainWorld('browserAPI', {
     send: (channel, data) => {
         if (validChannels.has(channel)) {
